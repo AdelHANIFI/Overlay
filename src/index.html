@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adhan Overlay</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Advanced SVG Definition for Flawless Luminance Masking -->
+    <svg width="0" height="0" style="position: absolute;">
+        <defs>
+            <filter id="crushBlack" color-interpolation-filters="sRGB">
+                <!-- This filter acts as an absolute threshold: anything grisâtre (gray) becomes #000, 
+                     and bright motifs remain solid. The box vanishes completely! -->
+                <feComponentTransfer>
+                    <feFuncR type="linear" slope="6" intercept="-1"/>
+                    <feFuncG type="linear" slope="6" intercept="-1"/>
+                    <feFuncB type="linear" slope="6" intercept="-1"/>
+                </feComponentTransfer>
+            </filter>
+            
+            <mask id="lumMask" maskContentUnits="objectBoundingBox" mask-type="luminance">
+                <!-- We pull the image and map it strictly as a transparency mask -->
+                <image href="corner.png" xlink:href="corner.png" x="0" y="0" width="1" height="1" preserveAspectRatio="none" filter="url(#crushBlack)"/>
+            </mask>
+        </defs>
+    </svg>
+
+    <div class="frame-container">
+        <div id="oriental-frame" class="frame glow-idle">
+            <!-- Divs that take exactly the shape of the mask -->
+            <div class="corner top-left"></div>
+            <div class="corner top-right"></div>
+            <div class="corner bottom-left"></div>
+            <div class="corner bottom-right"></div>
+        </div>
+    </div>
+    <script src="renderer.js"></script>
+</body>
+</html>

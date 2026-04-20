@@ -1,0 +1,47 @@
+{
+  "name": "adhan-desktop",
+  "version": "1.0.0",
+  "description": "Adhan Desktop Overlay",
+  "main": "src/main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AdelHANIFI/Overlay.git"
+  },
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win"
+  },
+  "build": {
+    "appId": "com.adelhanifi.adhandesktop",
+    "productName": "Adhan Overlay",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "src/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "runAfterFinish": true
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "AdelHANIFI",
+        "repo": "Overlay"
+      }
+    ]
+  },
+  "dependencies": {
+    "adhan": "^4.4.3",
+    "axios": "^1.6.8",
+    "electron-store": "^8.2.0",
+    "electron-updater": "^6.3.0"
+  },
+  "devDependencies": {
+    "electron": "^30.5.1",
+    "electron-builder": "^26.8.1"
+  }
+}

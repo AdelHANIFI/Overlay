@@ -1,0 +1,118 @@
+html, body {
+    margin: 0; padding: 0; width: 100vw; height: 100vh;
+    overflow: hidden; background-color: transparent !important;
+}
+
+.frame-container {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    padding: 1.5vw;
+    box-sizing: border-box;
+}
+
+.frame {
+    width: 100%; height: 100%;
+    position: relative;
+    box-sizing: border-box;
+    transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    border: 3px solid rgba(var(--frame-rgb), var(--frame-alpha));
+    border-radius: 12px;
+    box-shadow: 
+        0 0 25px rgba(var(--frame-rgb), var(--shadow-alpha)),
+        inset 0 0 25px rgba(var(--frame-rgb), var(--shadow-alpha));
+}
+
+/* Base Corner setup using SVG Luminance mask */
+.corner {
+    position: absolute;
+    width: 12vw; 
+    height: 12vw;
+    min-width: 70px; min-height: 70px;
+    max-width: 180px; max-height: 180px;
+    
+    background-color: rgb(var(--frame-rgb));
+    
+    /* Cuts out the exact white pattern from the PNG and drops all the dark grey! */
+    mask: url(#lumMask);
+    -webkit-mask: url(#lumMask);
+    
+    opacity: var(--corner-opacity);
+    transition: opacity 1.5s ease-in-out;
+}
+
+/* Rotate the corner perfectly into the 4 slots */
+.top-left { top: -3px; left: -3px; }
+.top-right { top: -3px; right: -3px; transform: scaleX(-1); }
+.bottom-left { bottom: -3px; left: -3px; transform: scaleY(-1); }
+.bottom-right { bottom: -3px; right: -3px; transform: scale(-1, -1); }
+
+/* THEMES */
+:root {
+  --color-active: 46, 204, 113; /* Vert */
+  --color-warning: 255, 140, 0; /* Orange */
+  --color-urgent: 255, 50, 50;  /* Rouge */
+}
+[data-theme="ocean"] {
+  --color-active: 0, 255, 255; /* Cyan */
+  --color-warning: 65, 105, 225; /* Bleu Royal */
+  --color-urgent: 138, 43, 226; /* Violet */
+}
+[data-theme="sahara"] {
+  --color-active: 255, 215, 0; /* Or */
+  --color-warning: 210, 105, 30; /* Cuivre */
+  --color-urgent: 178, 34, 34; /* Cerise */
+}
+[data-theme="aurore"] {
+  --color-active: 80, 200, 120; /* Emeraude */
+  --color-warning: 244, 196, 48; /* Safran */
+  --color-urgent: 255, 0, 255; /* Magenta */
+}
+
+/* Color States using Dynamic Theme Variables */
+.glow-idle {
+    --frame-rgb: var(--color-active);
+    --frame-alpha: 0;
+    --shadow-alpha: 0;
+    --corner-opacity: 0;
+}
+
+.glow-active {
+    --frame-rgb: var(--color-active);
+    --frame-alpha: 0.4;
+    --shadow-alpha: 0.2;
+    --corner-opacity: 0.35;
+    animation: breathe-active 3s infinite alternate;
+}
+
+.glow-warning {
+    --frame-rgb: var(--color-warning);
+    --frame-alpha: 0.4;
+    --shadow-alpha: 0.2;
+    --corner-opacity: 0.35;
+    animation: breathe-warning 3s infinite alternate;
+}
+
+.glow-urgent {
+    --frame-rgb: var(--color-urgent);
+    --frame-alpha: 0.5;
+    --shadow-alpha: 0.3;
+    --corner-opacity: 0.45;
+    animation: breathe-urgent 1.5s infinite alternate;
+}
+
+@keyframes breathe-warning {
+    0% { filter: brightness(1) drop-shadow(0 0 10px rgba(var(--frame-rgb), 0.5)); transform: scale(1); }
+    100% { filter: brightness(1.2) drop-shadow(0 0 25px rgba(var(--frame-rgb), 0.8)); transform: scale(1.002); }
+}
+
+@keyframes breathe-urgent {
+    0% { filter: brightness(1) drop-shadow(0 0 15px rgba(var(--frame-rgb), 0.6)); transform: scale(1); }
+    100% { filter: brightness(1.4) drop-shadow(0 0 35px rgba(var(--frame-rgb), 1)); transform: scale(1.005); }
+}
+
+@keyframes breathe-active {
+    0% { filter: brightness(1) drop-shadow(0 0 10px rgba(var(--frame-rgb), 0.4)); }
+    100% { filter: brightness(1.2) drop-shadow(0 0 25px rgba(var(--frame-rgb), 0.8)); }
+}
