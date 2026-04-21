@@ -199,7 +199,7 @@ function updateTrayMenu(prayerTimes, tomorrowTimes, currentPrayerStr, windowEndM
         { label: 'Test : Simuler Urgence (-10m)', click: () => { if(mainWindow) mainWindow.webContents.send('adhan-state', { state: 'urgent', theme: currentTheme }); } },
         { label: 'Test : Simuler Normal (Cacher)', click: () => { if(mainWindow) mainWindow.webContents.send('adhan-state', { state: 'normal', theme: currentTheme }); } },
         { type: 'separator' },
-        { label: '☕ Soutenir le développeur', click: () => { shell.openExternal('https://www.buymeacoffee.com/'); } },
+        { label: '☕ Soutenir le développeur', click: () => { shell.openExternal('https://buymeacoffee.com/overlayprayers'); } },
         { type: 'separator' },
         { label: 'Quitter', role: 'quit' }
     );
