@@ -69,6 +69,11 @@ html, body {
   --color-warning: 244, 196, 48; /* Safran */
   --color-urgent: 255, 0, 255; /* Magenta */
 }
+[data-theme="oasis"] {
+  --color-active: 0, 230, 200; /* Turquoise */
+  --color-warning: 240, 230, 140; /* Sable */
+  --color-urgent: 255, 127, 80; /* Corail */
+}
 
 /* Color States using Dynamic Theme Variables */
 .glow-idle {

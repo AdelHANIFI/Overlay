@@ -187,7 +187,8 @@ function updateTrayMenu(prayerTimes, tomorrowTimes, currentPrayerStr, windowEndM
                 { label: 'Classique (Vert, Orange, Rouge)', type: 'radio', checked: currentTheme === 'classic', click: () => changeTheme('classic') },
                 { label: 'Océan Arctique (Cyan, Bleu Royal, Violet)', type: 'radio', checked: currentTheme === 'ocean', click: () => changeTheme('ocean') },
                 { label: 'Désert Sahara (Or, Cuivre, Cerise)', type: 'radio', checked: currentTheme === 'sahara', click: () => changeTheme('sahara') },
-                { label: 'Aurore Boréale (Emeraude, Safran, Magenta)', type: 'radio', checked: currentTheme === 'aurore', click: () => changeTheme('aurore') }
+                { label: 'Aurore Boréale (Emeraude, Safran, Magenta)', type: 'radio', checked: currentTheme === 'aurore', click: () => changeTheme('aurore') },
+                { label: 'Oasis Lumineuse (Turquoise, Sable, Corail)', type: 'radio', checked: currentTheme === 'oasis', click: () => changeTheme('oasis') }
             ]
         },
         { type: 'separator' },
