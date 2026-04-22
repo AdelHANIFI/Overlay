@@ -1,7 +1,18 @@
 let currentTimeout = null;
+let lastState = null;
+let lastTheme = null;
 
 window.adhanAPI.onStateChange((data) => {
-    const { state, theme } = data;
+    const { state, theme, force } = data;
+    
+    // Ignore duplicate 1-minute polling updates unless manually forced 
+    if (!force && state === lastState && theme === lastTheme) {
+        return;
+    }
+    
+    lastState = state;
+    lastTheme = theme;
+    
     const frame = document.getElementById('oriental-frame');
     
     if (currentTimeout) {
@@ -21,18 +32,12 @@ window.adhanAPI.onStateChange((data) => {
     // Hack: Force un repaint immédiat pour éviter le lag d'affichage Chromium
     void frame.offsetWidth;
     
-    if (state === 'active') {
-        frame.classList.add('glow-active');
-        
-        currentTimeout = setTimeout(() => {
-            if (frame.classList.contains('glow-active')) {
-                frame.classList.add('fade-out');
-            }
-        }, 15000);
-        
-    } else if (state === 'urgent') {
-        frame.classList.add('glow-urgent');
-    } else if (state === 'warning') {
-        frame.classList.add('glow-warning');
-    }
+    if (state === 'active') frame.classList.add('glow-active');
+    else if (state === 'urgent') frame.classList.add('glow-urgent');
+    else if (state === 'warning') frame.classList.add('glow-warning');
+
+    // All states now disappear completely after 15 seconds!
+    currentTimeout = setTimeout(() => {
+        frame.classList.add('fade-out');
+    }, 15000);
 });

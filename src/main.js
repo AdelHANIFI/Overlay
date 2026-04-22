@@ -197,11 +197,11 @@ function updateTrayMenu(prayerTimes, tomorrowTimes, currentPrayerStr, windowEndM
         {
             label: '👀 Tester les couleurs du thème',
             submenu: [
-                { label: 'Simuler : Début de prière', click: () => { if(mainWindow) mainWindow.webContents.send('adhan-state', { state: 'active', theme: currentTheme }); } },
-                { label: 'Simuler : Alerte (-30m)', click: () => { if(mainWindow) mainWindow.webContents.send('adhan-state', { state: 'warning', theme: currentTheme }); } },
-                { label: 'Simuler : Urgence (-10m)', click: () => { if(mainWindow) mainWindow.webContents.send('adhan-state', { state: 'urgent', theme: currentTheme }); } },
+                { label: 'Simuler : Début de prière', click: () => { if(mainWindow) mainWindow.webContents.send('adhan-state', { state: 'active', theme: currentTheme, force: true }); } },
+                { label: 'Simuler : Alerte (-30m)', click: () => { if(mainWindow) mainWindow.webContents.send('adhan-state', { state: 'warning', theme: currentTheme, force: true }); } },
+                { label: 'Simuler : Urgence (-10m)', click: () => { if(mainWindow) mainWindow.webContents.send('adhan-state', { state: 'urgent', theme: currentTheme, force: true }); } },
                 { type: 'separator' },
-                { label: 'Cacher le cadre de test', click: () => { if(mainWindow) mainWindow.webContents.send('adhan-state', { state: 'normal', theme: currentTheme }); } }
+                { label: 'Cacher le cadre de test', click: () => { if(mainWindow) mainWindow.webContents.send('adhan-state', { state: 'normal', theme: currentTheme, force: true }); } }
             ]
         },
         { type: 'separator' },
