@@ -193,7 +193,6 @@ function updateTrayMenu(prayerTimes, tomorrowTimes, currentPrayerStr, windowEndM
         },
         { type: 'separator' },
         { label: 'Relancer la Geolocalisation', click: () => { store.delete('coordinates'); getCoordinates(); } },
-        { label: 'Ouvrir Debug', click: () => { if(mainWindow) mainWindow.webContents.openDevTools({ mode: 'detach' }); } },
         { type: 'separator' },
         { label: 'Test : Simuler Start (1ere phase)', click: () => { if(mainWindow) mainWindow.webContents.send('adhan-state', { state: 'active', theme: currentTheme }); } },
         { label: 'Test : Simuler Alerte (-30m)', click: () => { if(mainWindow) mainWindow.webContents.send('adhan-state', { state: 'warning', theme: currentTheme }); } },
