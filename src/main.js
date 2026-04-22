@@ -63,7 +63,12 @@ async function getCoordinates() {
 function calculateSubliminalState(coords) {
     const date = new Date();
     const coordinates = new adhan.Coordinates(coords.lat, coords.lon);
+    
+    // Méthode de calcul "Full Auto" (Calquée sur Mawaqit France / UOIF à 12°)
     const params = adhan.CalculationMethod.MuslimWorldLeague();
+    params.fajrAngle = 12;
+    params.ishaAngle = 12;
+    
     const prayerTimes = new adhan.PrayerTimes(coordinates, date, params);
     
     const now = date.getTime();
@@ -182,6 +187,18 @@ function updateTrayMenu(prayerTimes, tomorrowTimes, currentPrayerStr, windowEndM
         { label: `Prochaine Prière: ${names[nextPStr]} à ${formatTime(nextPDate)}`, enabled: false },
         { type: 'separator' },
         {
+            label: '🕒 Horaires du Jour',
+            submenu: [
+                { label: `Fajr : ${formatTime(prayerTimes.fajr)}`, enabled: false },
+                { label: `Chourouk : ${formatTime(prayerTimes.sunrise)}`, enabled: false },
+                { label: `Dohr : ${formatTime(prayerTimes.dhuhr)}`, enabled: false },
+                { label: `Asr : ${formatTime(prayerTimes.asr)}`, enabled: false },
+                { label: `Maghrib : ${formatTime(prayerTimes.maghrib)}`, enabled: false },
+                { label: `Isha : ${formatTime(prayerTimes.isha)}`, enabled: false }
+            ]
+        },
+        { type: 'separator' },
+        {
             label: '🎨 Thème de Couleurs de Cadre',
             submenu: [
                 { label: 'Classique (Vert, Orange, Rouge)', type: 'radio', checked: currentTheme === 'classic', click: () => changeTheme('classic') },
@@ -220,6 +237,12 @@ function updateTrayMenu(prayerTimes, tomorrowTimes, currentPrayerStr, windowEndM
 }
 
 app.whenReady().then(async () => {
+    // Activer silencieusement le démarrage automatique de l'application au démarrage de Windows
+    app.setLoginItemSettings({
+        openAtLogin: true,
+        path: app.getPath('exe')
+    });
+
     createWindow();
     
     // Create an elegant custom icon to sit in the System Tray
