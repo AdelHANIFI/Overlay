@@ -10,6 +10,12 @@ window.adhanAPI.onStateChange((data) => {
     }
     
     document.documentElement.setAttribute('data-theme', theme || 'classic');
+    
+    if (state === 'normal') {
+        frame.classList.add('fade-out');
+        return;
+    }
+
     frame.className = 'frame';
     
     // Hack: Force un repaint immédiat pour éviter le lag d'affichage Chromium
@@ -20,7 +26,7 @@ window.adhanAPI.onStateChange((data) => {
         
         currentTimeout = setTimeout(() => {
             if (frame.classList.contains('glow-active')) {
-                frame.className = 'frame glow-idle';
+                frame.classList.add('fade-out');
             }
         }, 15000);
         
@@ -28,7 +34,5 @@ window.adhanAPI.onStateChange((data) => {
         frame.classList.add('glow-urgent');
     } else if (state === 'warning') {
         frame.classList.add('glow-warning');
-    } else {
-        frame.classList.add('glow-idle');
     }
 });

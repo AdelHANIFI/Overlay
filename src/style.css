@@ -76,11 +76,10 @@ html, body {
 }
 
 /* Color States using Dynamic Theme Variables */
-.glow-idle {
-    --frame-rgb: var(--color-active);
-    --frame-alpha: 0;
-    --shadow-alpha: 0;
-    --corner-opacity: 0;
+.fade-out {
+    --frame-alpha: 0 !important;
+    --shadow-alpha: 0 !important;
+    --corner-opacity: 0 !important;
 }
 
 .glow-active {
