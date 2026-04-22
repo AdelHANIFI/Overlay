@@ -43,13 +43,17 @@ function createWindow() {
 
 async function getCoordinates() {
     let coords = store.get('coordinates');
-    if (!coords || !coords.lat) {
+    let isManual = store.get('isManualLocation') === true;
+    
+    if (!coords || !coords.lat || !isManual) {
         try {
             // Geolocation IP simple and fast
             const res = await axios.get('http://ip-api.com/json/');
             if (res.data && res.data.status === 'success') {
                 coords = { lat: res.data.lat, lon: res.data.lon };
                 store.set('coordinates', coords);
+                store.set('cityName', res.data.city);
+                store.set('isManualLocation', false);
             } else {
                 coords = { lat: 48.8566, lon: 2.3522 }; // Fallback Paris
             }
@@ -209,7 +213,19 @@ function updateTrayMenu(prayerTimes, tomorrowTimes, currentPrayerStr, windowEndM
             ]
         },
         { type: 'separator' },
-        { label: 'Relancer la Geolocalisation', click: () => { store.delete('coordinates'); getCoordinates(); } },
+        { label: `📍 Ville Actuelle : ${store.get('cityName') || 'Automatique'}`, enabled: false },
+        { label: '🔄 Forcer une autre ville (Contourner VPN)', click: () => { 
+            if (mainWindow) {
+                mainWindow.setIgnoreMouseEvents(false);
+                mainWindow.webContents.send('open-city-prompt');
+            }
+        } },
+        { label: '🌎 Revenir à la géolocalisation IP', click: () => { 
+            store.delete('coordinates'); 
+            store.delete('isManualLocation');
+            store.delete('cityName');
+            getCoordinates().then((coords) => calculateSubliminalState(coords)); 
+        } },
         { type: 'separator' },
         {
             label: '👀 Tester les couleurs du thème',
@@ -253,6 +269,37 @@ app.whenReady().then(async () => {
 
     const coords = await getCoordinates();
     
+    // IPC Listeners pour la localisation manuelle
+    ipcMain.handle('submit-city', async (event, cityName) => {
+        try {
+            const res = await axios.get(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cityName)}&format=json&limit=1`, {
+                headers: { 'User-Agent': 'AdhanDesktopOverlay/1.0' }
+            });
+            
+            if (res.data && res.data.length > 0) {
+                const lat = parseFloat(res.data[0].lat);
+                const lon = parseFloat(res.data[0].lon);
+                const formattedName = res.data[0].display_name.split(',')[0];
+                
+                store.set('coordinates', { lat, lon });
+                store.set('cityName', formattedName);
+                store.set('isManualLocation', true);
+                
+                if (mainWindow) mainWindow.setIgnoreMouseEvents(true, { forward: true });
+                
+                getCoordinates().then((c) => calculateSubliminalState(c));
+                return true;
+            }
+        } catch (e) {
+            console.error("Geocoding error", e);
+        }
+        return false;
+    });
+
+    ipcMain.on('close-prompt', () => {
+        if (mainWindow) mainWindow.setIgnoreMouseEvents(true, { forward: true });
+    });
+
     // Send state immediately
     calculateSubliminalState(coords);
 

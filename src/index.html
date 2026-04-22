@@ -36,6 +36,20 @@
             <div class="corner bottom-right"></div>
         </div>
     </div>
+    
+    <div id="city-prompt" class="prompt-overlay" style="display: none;">
+        <div class="prompt-box">
+            <h2>Forcer la Localisation</h2>
+            <p>Entrez le nom de votre ville pour contourner le VPN :</p>
+            <input type="text" id="city-input" placeholder="ex: Pau, France" />
+            <div class="prompt-buttons">
+                <button id="btn-cancel">Annuler</button>
+                <button id="btn-submit">Valider</button>
+            </div>
+            <p id="prompt-error" style="color: #ff5555; display: none; font-size: 12px; margin-top: 10px;"></p>
+        </div>
+    </div>
+
     <script src="renderer.js"></script>
 </body>
 </html>
