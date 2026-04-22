@@ -194,10 +194,16 @@ function updateTrayMenu(prayerTimes, tomorrowTimes, currentPrayerStr, windowEndM
         { type: 'separator' },
         { label: 'Relancer la Geolocalisation', click: () => { store.delete('coordinates'); getCoordinates(); } },
         { type: 'separator' },
-        { label: 'Test : Simuler Start (1ere phase)', click: () => { if(mainWindow) mainWindow.webContents.send('adhan-state', { state: 'active', theme: currentTheme }); } },
-        { label: 'Test : Simuler Alerte (-30m)', click: () => { if(mainWindow) mainWindow.webContents.send('adhan-state', { state: 'warning', theme: currentTheme }); } },
-        { label: 'Test : Simuler Urgence (-10m)', click: () => { if(mainWindow) mainWindow.webContents.send('adhan-state', { state: 'urgent', theme: currentTheme }); } },
-        { label: 'Test : Simuler Normal (Cacher)', click: () => { if(mainWindow) mainWindow.webContents.send('adhan-state', { state: 'normal', theme: currentTheme }); } },
+        {
+            label: '👀 Tester les couleurs du thème',
+            submenu: [
+                { label: 'Simuler : Début de prière', click: () => { if(mainWindow) mainWindow.webContents.send('adhan-state', { state: 'active', theme: currentTheme }); } },
+                { label: 'Simuler : Alerte (-30m)', click: () => { if(mainWindow) mainWindow.webContents.send('adhan-state', { state: 'warning', theme: currentTheme }); } },
+                { label: 'Simuler : Urgence (-10m)', click: () => { if(mainWindow) mainWindow.webContents.send('adhan-state', { state: 'urgent', theme: currentTheme }); } },
+                { type: 'separator' },
+                { label: 'Cacher le cadre de test', click: () => { if(mainWindow) mainWindow.webContents.send('adhan-state', { state: 'normal', theme: currentTheme }); } }
+            ]
+        },
         { type: 'separator' },
         { label: '☕ Soutenir le développeur', click: () => { shell.openExternal('https://buymeacoffee.com/overlayprayers'); } },
         { type: 'separator' },

@@ -1,6 +1,6 @@
 {
   "name": "adhan-desktop",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Adhan Desktop Overlay",
   "main": "src/main.js",
   "repository": {
