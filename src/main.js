@@ -44,7 +44,7 @@ function createWindow() {
 async function getCoordinates() {
     let coords = store.get('coordinates');
     let isManual = store.get('isManualLocation') === true;
-    
+
     if (!coords || !coords.lat || !isManual) {
         try {
             // Geolocation IP simple and fast
@@ -67,30 +67,30 @@ async function getCoordinates() {
 function calculateSubliminalState(coords) {
     const date = new Date();
     const coordinates = new adhan.Coordinates(coords.lat, coords.lon);
-    
+
     // Méthode de calcul "Full Auto" (Calquée sur Mawaqit France / UOIF à 12°)
     const params = adhan.CalculationMethod.MuslimWorldLeague();
     params.fajrAngle = 12;
     params.ishaAngle = 12;
-    
+
     const prayerTimes = new adhan.PrayerTimes(coordinates, date, params);
-    
+
     const now = date.getTime();
-    
+
     // We need tomorrow's times for Isha calculations
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const tomorrowTimes = new adhan.PrayerTimes(coordinates, tomorrow, params);
 
     const currentPrayer = prayerTimes.currentPrayer();
-    
+
     let state = 'normal';
     let windowEndMs = null;
     let prayerStartTimeMs = null;
 
     if (currentPrayer !== adhan.Prayer.None && currentPrayer !== adhan.Prayer.Sunrise) {
         prayerStartTimeMs = prayerTimes.timeForPrayer(currentPrayer).getTime();
-        
+
         switch (currentPrayer) {
             case adhan.Prayer.Fajr:
                 windowEndMs = prayerTimes.timeForPrayer(adhan.Prayer.Sunrise).getTime();
@@ -112,15 +112,15 @@ function calculateSubliminalState(coords) {
         const minsSinceStart = (now - prayerStartTimeMs) / 60000;
         const minsUntilEnd = (windowEndMs - now) / 60000;
 
-        if (minsSinceStart >= 0 && minsSinceStart < 1) { 
+        if (minsSinceStart >= 0 && minsSinceStart < 5) {
             // L'heure pile vient de rentrer, on envoie le signal vert
             state = 'active';
         } else if (minsUntilEnd <= 10 && minsUntilEnd >= 0) {
             // Il ne reste que 10 min ou moins avant la FIN de plage (Rouge)
-            state = 'urgent'; 
+            state = 'urgent';
         } else if (minsUntilEnd <= 30 && minsUntilEnd > 10) {
             // Il reste moins de 30 min avant la FIN de la plage (Orange)
-            state = 'warning'; 
+            state = 'warning';
         }
     } else {
         // Handles exact minute triggering when outside windows
@@ -214,27 +214,31 @@ function updateTrayMenu(prayerTimes, tomorrowTimes, currentPrayerStr, windowEndM
         },
         { type: 'separator' },
         { label: `📍 Ville Actuelle : ${store.get('cityName') || 'Automatique'}`, enabled: false },
-        { label: '🔄 Forcer une autre ville (Contourner VPN)', click: () => { 
-            if (mainWindow) {
-                mainWindow.setIgnoreMouseEvents(false);
-                mainWindow.webContents.send('open-city-prompt');
+        {
+            label: '🔄 Forcer une autre ville ', click: () => {
+                if (mainWindow) {
+                    mainWindow.setIgnoreMouseEvents(false);
+                    mainWindow.webContents.send('open-city-prompt');
+                }
             }
-        } },
-        { label: '🌎 Revenir à la géolocalisation IP', click: () => { 
-            store.delete('coordinates'); 
-            store.delete('isManualLocation');
-            store.delete('cityName');
-            getCoordinates().then((coords) => calculateSubliminalState(coords)); 
-        } },
+        },
+        {
+            label: '🌎 Revenir à la géolocalisation IP', click: () => {
+                store.delete('coordinates');
+                store.delete('isManualLocation');
+                store.delete('cityName');
+                getCoordinates().then((coords) => calculateSubliminalState(coords));
+            }
+        },
         { type: 'separator' },
         {
             label: '👀 Tester les couleurs du thème',
             submenu: [
-                { label: 'Simuler : Début de prière', click: () => { if(mainWindow) mainWindow.webContents.send('adhan-state', { state: 'active', theme: currentTheme, force: true }); } },
-                { label: 'Simuler : Alerte (-30m)', click: () => { if(mainWindow) mainWindow.webContents.send('adhan-state', { state: 'warning', theme: currentTheme, force: true }); } },
-                { label: 'Simuler : Urgence (-10m)', click: () => { if(mainWindow) mainWindow.webContents.send('adhan-state', { state: 'urgent', theme: currentTheme, force: true }); } },
+                { label: 'Simuler : Début de prière', click: () => { if (mainWindow) mainWindow.webContents.send('adhan-state', { state: 'active', theme: currentTheme, force: true }); } },
+                { label: 'Simuler : Alerte (-30m)', click: () => { if (mainWindow) mainWindow.webContents.send('adhan-state', { state: 'warning', theme: currentTheme, force: true }); } },
+                { label: 'Simuler : Urgence (-10m)', click: () => { if (mainWindow) mainWindow.webContents.send('adhan-state', { state: 'urgent', theme: currentTheme, force: true }); } },
                 { type: 'separator' },
-                { label: 'Cacher le cadre de test', click: () => { if(mainWindow) mainWindow.webContents.send('adhan-state', { state: 'normal', theme: currentTheme, force: true }); } }
+                { label: 'Cacher le cadre de test', click: () => { if (mainWindow) mainWindow.webContents.send('adhan-state', { state: 'normal', theme: currentTheme, force: true }); } }
             ]
         },
         { type: 'separator' },
@@ -242,7 +246,7 @@ function updateTrayMenu(prayerTimes, tomorrowTimes, currentPrayerStr, windowEndM
         { type: 'separator' },
         { label: 'Quitter', role: 'quit' }
     );
-    
+
     tray.setContextMenu(Menu.buildFromTemplate(menuTemplate));
 
     if (windowEndMs && currentPrayerStr !== adhan.Prayer.Sunrise && currentPrayerStr !== adhan.Prayer.None) {
@@ -260,7 +264,7 @@ app.whenReady().then(async () => {
     });
 
     createWindow();
-    
+
     // Create an elegant custom icon to sit in the System Tray
     const iconPath = path.join(__dirname, 'icon.png');
     const icon = nativeImage.createFromPath(iconPath).resize({ width: 24, height: 24 });
@@ -268,25 +272,25 @@ app.whenReady().then(async () => {
     tray.setToolTip('Calcul des horaires en cours...');
 
     const coords = await getCoordinates();
-    
+
     // IPC Listeners pour la localisation manuelle
     ipcMain.handle('submit-city', async (event, cityName) => {
         try {
             const res = await axios.get(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cityName)}&format=json&limit=1`, {
                 headers: { 'User-Agent': 'AdhanDesktopOverlay/1.0' }
             });
-            
+
             if (res.data && res.data.length > 0) {
                 const lat = parseFloat(res.data[0].lat);
                 const lon = parseFloat(res.data[0].lon);
                 const formattedName = res.data[0].display_name.split(',')[0];
-                
+
                 store.set('coordinates', { lat, lon });
                 store.set('cityName', formattedName);
                 store.set('isManualLocation', true);
-                
+
                 if (mainWindow) mainWindow.setIgnoreMouseEvents(true, { forward: true });
-                
+
                 getCoordinates().then((c) => calculateSubliminalState(c));
                 return true;
             }
@@ -315,14 +319,14 @@ app.whenReady().then(async () => {
     // Configuration de la Mise à Jour Automatique (OTA)
     autoUpdater.autoDownload = true;
     autoUpdater.autoInstallOnAppQuit = true;
-    
+
     if (app.isPackaged) {
         autoUpdater.checkForUpdatesAndNotify();
-        
+
         // Vérifier toutes les 6 heures si on laisse l'appli allumée H24
         setInterval(() => { autoUpdater.checkForUpdatesAndNotify(); }, 6 * 60 * 60 * 1000);
     }
-    
+
     autoUpdater.on('update-available', () => {
         if (tray) tray.displayBalloon({ icon: icon, title: 'Adhan Overlay', content: 'Une mise à jour est disponible. Téléchargement discret en fond...' });
     });
