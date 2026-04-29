@@ -42,6 +42,11 @@ window.adhanAPI.onStateChange((data) => {
     }, 15000);
 });
 
+// Shortcut & Tray click logic to vanish immediately
+window.adhanAPI.onForceHide(() => {
+    document.getElementById('oriental-frame').classList.add('fade-out');
+});
+
 // City Prompt Logic
 window.adhanAPI.onOpenPrompt(() => {
     document.getElementById('city-prompt').style.display = 'flex';

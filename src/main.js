@@ -1,4 +1,4 @@
-const { app, BrowserWindow, screen, Tray, Menu, ipcMain, nativeImage, shell } = require('electron');
+const { app, BrowserWindow, screen, Tray, Menu, ipcMain, nativeImage, shell, globalShortcut } = require('electron');
 const path = require('path');
 const Store = require('electron-store');
 const axios = require('axios');
@@ -271,6 +271,13 @@ app.whenReady().then(async () => {
     tray = new Tray(icon);
     tray.setToolTip('Calcul des horaires en cours...');
 
+    // Un simple clic sur l'icône cache le cadre instantanément
+    tray.on('click', () => {
+        if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.webContents.send('force-hide-frame');
+        }
+    });
+
     const coords = await getCoordinates();
 
     // IPC Listeners pour la localisation manuelle
@@ -314,6 +321,13 @@ app.whenReady().then(async () => {
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    });
+
+    // Raccourci global pour masquer immédiatement l'alerte si elle dérange
+    globalShortcut.register('CommandOrControl+Space', () => {
+        if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.webContents.send('force-hide-frame');
+        }
     });
 
     // Configuration de la Mise à Jour Automatique (OTA)
